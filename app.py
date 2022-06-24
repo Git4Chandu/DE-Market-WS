@@ -22,7 +22,7 @@ def to_excel(df, fname):
         buffer = io.BytesIO()
         with st.spinner('Writing to Excel will take few minutes to complete Please wait...'):
             with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-                df.to_excel(writer, sheet_name='Sheet1')
+                df.to_excel(writer, index_label="Sr. No.", startrow=5, startcol=0, sheet_name='Sheet1')
 
 
                 workbook  = writer.book
