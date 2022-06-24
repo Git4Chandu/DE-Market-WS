@@ -69,7 +69,7 @@ def structuring_data_to_excel(header_data: List, content_data: List):
     for i in range(0, len(content_data), 2):
         content1.append(content_data[i])
     content2 = [i for i in content if i not in content1]
-    df = pd.DataFrame({"S.no":range(1, len(content1)+1), "content1": header_data, "content2":content1, "content3": content2})
+    df = pd.DataFrame({"Sr. No":range(1, len(content1)+1), "content1": header_data, "content2":content1, "content3": content2})
     return df
 
 st.header("Unknow Application")
@@ -102,7 +102,7 @@ if download:
 
         number_of_pages = find_max_pages(html_page)
 
-        header, content = scrape_data(number_of_pages, search_term)
+        header, content = scrape_data(4, search_term)
 
         df = structuring_data_to_excel(header, content)
 
