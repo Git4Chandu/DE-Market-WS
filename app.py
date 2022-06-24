@@ -141,7 +141,7 @@ if download:
 
         # to_excel(df, fname = search_term)
 
-        download = FileDownloader(df.to_excel(index_label="Sr. No.", startrow=5, startcol=0, filename = "Research on Germany Stroke Market_"+search_term,file_ext='xlsx').download()
+        download = FileDownloader(df.to_excel(index_label="Sr. No.", startrow=5, startcol=0), filename = "Research on Germany Stroke Market_"+search_term,file_ext='xlsx').download()
     else:
         st.error("Wrong Search keyword, Please enter correct Search keyword.")
 
