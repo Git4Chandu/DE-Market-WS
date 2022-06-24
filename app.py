@@ -23,6 +23,24 @@ def to_excel(df, fname):
         with st.spinner('Writing to Excel will take few minutes to complete Please wait...'):
             with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
                 df.to_excel(writer, sheet_name='Sheet1')
+
+
+                workbook  = writer.book
+                worksheet = writer.sheets['Sheet1']
+
+                # Insert an image.
+                worksheet.insert_image('A1', 'logo.png')
+                # Formating stuff.
+                bold = workbook.add_format({'bold': True})
+                cell_format = workbook.add_format({'bold': True, 'font_color': 'red'})
+                
+                worksheet.set_column('B:F', 35)
+                worksheet.write('C2', 'Research on Germany Stroke Market', bold)
+                worksheet.write('F2', 'Results for search string:', bold)
+                worksheet.write('F3',search_term , cell_format)
+                worksheet.write('F4',"Found: "+str(number_of_pages)+" pages")
+
+        
                 writer.save()
         return buffer
 
@@ -118,25 +136,8 @@ if download:
 
         df = structuring_data_to_excel(header, content)
                 
-        writer = df.ExcelWriter(d4+"_Research on Germany Stroke Market_"+sKey+".xlsx", engine="xlsxwriter")
-        # Get the xlsxwriter workbook and worksheet objects.
-        workbook  = writer.book
-        worksheet = writer.sheets['Sheet1']
 
-        # Insert an image.
-        worksheet.insert_image('A1', 'logo.png')
-        # Formating stuff.
-        bold = workbook.add_format({'bold': True})
-        cell_format = workbook.add_format({'bold': True, 'font_color': 'red'})
-        
-        worksheet.set_column('B:F', 35)
-        worksheet.write('C2', 'Research on Germany Stroke Market', bold)
-        worksheet.write('F2', 'Results for search string:', bold)
-        worksheet.write('F3',search_term , cell_format)
-        worksheet.write('F4',"Found: "+str(number_of_pages)+" pages")
 
-        # Close the Pandas Excel writer and output the Excel file.
-        writer.save()
 
 
         # to_excel(df, fname = search_term)
