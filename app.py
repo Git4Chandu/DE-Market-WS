@@ -56,25 +56,37 @@ def scrape_data(number_of_pages:int, keyword:str):
         page = uclient.read()
         uclient.close()
         html_page = bs(page, "html.parser")
+        
         for div in html_page.findAll('h3', {"class": "serp-card-heading"}):
             header.append(div.find('a').contents[0])
+            
         for div in html_page.find_all("div", {"class": "serp-card-highlight-subline"}):
             head = div.contents[0]
+            
             if not head == "Patientenbefragung der Techniker Krankenkasse":
                 content.append(head)
+                
     return header, content
 
 def structuring_data_to_excel(header_data: List, content_data: List):
+
     content1 = []
     for i in range(0, len(content_data), 2):
         content1.append(content_data[i])
+        
     content2 = [i for i in content if i not in content1]
-    df = pd.DataFrame({"Sr. No":range(1, len(content1)+1), "content1": header_data, "content2":content1, "content3": content2})
+    
+    df = pd.DataFrame({"content1": header_data, "content2":content1, "content3": content2})
+    df.index = df.index + 1
+    
+    
+    
     return df
 
-st.header("Unknow Application")
-search_term = st.text_input("Enter your search word")
-download = st.button("Get Data")
+st.header("Web Scraping: Research on Germany Stroke Market")
+search_term = st.text_input("Enter your search term")
+download = st.button("Fetch Data")
+
 class FileDownloader(object):
 
     def __init__(self, data,filename='myfile',file_ext='txt'):
@@ -85,7 +97,7 @@ class FileDownloader(object):
 
     def download(self):
         b64 = base64.b64encode(self.data.encode()).decode()
-        new_filename = "{}_{}.{}".format(self.filename,timestr,self.file_ext)
+        new_filename = "{}_{}.{}".format(timestr,self.filename,self.file_ext)
         href = f'<a href="data:file/{self.file_ext};base64,{b64}" download="{new_filename}">Click Here to download the file.!!</a>'
         st.markdown(href,unsafe_allow_html=True)
         
@@ -105,10 +117,31 @@ if download:
         header, content = scrape_data(4, search_term)
 
         df = structuring_data_to_excel(header, content)
+                
+        writer = df.ExcelWriter(d4+"_Research on Germany Stroke Market_"+sKey+".xlsx", engine="xlsxwriter")
+        # Get the xlsxwriter workbook and worksheet objects.
+        workbook  = writer.book
+        worksheet = writer.sheets['Sheet1']
+
+        # Insert an image.
+        worksheet.insert_image('A1', 'logo.png')
+        # Formating stuff.
+        bold = workbook.add_format({'bold': True})
+        cell_format = workbook.add_format({'bold': True, 'font_color': 'red'})
+        
+        worksheet.set_column('B:F', 35)
+        worksheet.write('C2', 'Research on Germany Stroke Market', bold)
+        worksheet.write('F2', 'Results for search string:', bold)
+        worksheet.write('F3',search_term , cell_format)
+        worksheet.write('F4',"Found: "+str(number_of_pages)+" pages")
+
+        # Close the Pandas Excel writer and output the Excel file.
+        writer.save()
+
 
         # to_excel(df, fname = search_term)
 
-        download = FileDownloader(df.to_csv(index = False),filename = search_term,file_ext='csv').download()
+        download = FileDownloader(df.to_excel(index_label="Sr. No.", startrow=5, startcol=0, filename = "Research on Germany Stroke Market_"+search_term,file_ext='xlsx').download()
     else:
         st.error("Wrong Search keyword, Please enter correct Search keyword.")
 
